@@ -194,20 +194,24 @@ class LLMClient:
 
                 decoder = codecs.getincrementaldecoder("utf-8")(errors='replace')
                 buffer = ""
-                
+                done = False
+
                 async for chunk_bytes in response.content:
+                    if done:
+                        break
                     chunk_time = time.perf_counter()
                     decoded_chunk = decoder.decode(chunk_bytes, final=False)
                     buffer += decoded_chunk
-                    
+
                     while "\n" in buffer:
                         line, buffer = buffer.split("\n", 1)
                         line = line.strip()
                         if not line:
                             continue
-                        
+
                         if line == 'data: [DONE]' or line == 'data:[DONE]':
-                            continue
+                            done = True
+                            break
                         
                         if line.startswith('data:'):
                             try:

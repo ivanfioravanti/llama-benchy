@@ -28,7 +28,7 @@ class BenchmarkRunner:
 
     async def run_suite(self):
         # Initialize session
-        timeout = aiohttp.ClientTimeout(total=3600)
+        timeout = aiohttp.ClientTimeout(total=3600, sock_read=120)
         max_concurrency = max(self.config.concurrency_levels)
         connector = aiohttp.TCPConnector(limit=max_concurrency + 5, force_close=False, keepalive_timeout=600)
         latency = 0.0  # default in case of early interrupt
